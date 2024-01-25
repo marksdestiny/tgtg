@@ -30,6 +30,21 @@ executable:
 	cp ./config.sample.ini ./dist/config.ini
 	zip -j ./dist/scanner.zip ./dist/*
 
+custom:
+	@if [ -z "${PLATFORM}" ]; then \
+		echo "No platform specified. You must specify platform by setting the environment variable\nPLATFORM. For example:\n\n    PLATFORM=linux/arm/v7 make custom\n"; \
+		return 1; \
+	fi
+	@if [ -d "dist/${PLATFORM}" ]; then \
+		rm -r dist/${PLATFORM}; \
+	fi
+	mkdir -p ./dist/${PLATFORM}
+	cp config.sample.ini dist/${PLATFORM}/config.ini
+	cp README.md dist/${PLATFORM}
+	cp LICENSE dist/${PLATFORM}
+	docker build --platform=${PLATFORM} --output=./dist/${PLATFORM} -f docker/Dockerfile.build .
+	zip -j dist/${PLATFORM}/scanner.zip dist/${PLATFORM}/*
+
 images:
 	docker build -f ./docker/Dockerfile -t tgtg-scanner:latest .
 	docker build -f ./docker/Dockerfile.alpine -t tgtg-scanner:latest-alpine .

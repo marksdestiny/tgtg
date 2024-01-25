@@ -9,6 +9,7 @@
 !/poetry.lock
 !/README.md
 !/LICENSE
+!/scanner.spec
 
 # Ignore unnecessary files inside allowed directories
 # This should go after the allowed directories

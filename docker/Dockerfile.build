@@ -1,0 +1,16 @@
+FROM ubuntu:22.04 AS build
+ENV POETRY=/root/.local/bin/poetry
+
+# gcc-arm-linux-gnueabihf, libffi-dev and libssl-dev is needed for the poetry
+# installation.
+# binutils is needed for the pyinstaller.
+RUN apt update && apt install -y build-essential python3-dev curl gcc-arm-linux-gnueabihf libffi-dev libssl-dev git binutils cargo pkg-config
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+RUN curl -sSL https://install.python-poetry.org | python3 -
+WORKDIR /tgtg
+COPY . .
+RUN $POETRY install --without test
+RUN $POETRY run pyinstaller ./scanner.spec
+
+FROM scratch
+COPY --from=build /tgtg/dist /
