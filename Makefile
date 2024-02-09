@@ -43,7 +43,9 @@ custom:
 	cp README.md dist/${PLATFORM}
 	cp LICENSE dist/${PLATFORM}
 	docker build --platform=${PLATFORM} --output=./dist/${PLATFORM} -f docker/Dockerfile.build .
-	zip -j dist/${PLATFORM}/scanner.zip dist/${PLATFORM}/*
+	tar -zcf dist/scanner.tar.gz --directory=dist/${PLATFORM} .
+	mv dist/scanner.tar.gz dist/${PLATFORM}
+
 
 images:
 	docker build -f ./docker/Dockerfile -t tgtg-scanner:latest .
